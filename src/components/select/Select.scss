@@ -1,0 +1,45 @@
+.select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  background-color: #3B474D;
+  color: #fff;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 48px;
+  padding: 20px;
+  border: none;
+  border-radius: 0 10px 10px 0;
+  cursor: pointer;
+
+  background-image: url('/assets/arrow.svg');
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+
+  &:focus {
+    border: none;
+    outline: none;
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: #F18900 #3B474D;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #3B474D;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #F18900;
+    border-radius: 4px;
+  }
+}
+
+.option {
+  font-size: 20px;
+}
