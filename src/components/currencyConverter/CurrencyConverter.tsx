@@ -1,11 +1,7 @@
 import { ChangeEvent, FC, useEffect, useState, useCallback } from "react"
-import { useDispatch, useSelector } from "react-redux"
 import debounce from 'lodash.debounce';
-import { RootState } from "../../store/store"
-import { chooseFrom, chooseTo } from "../../store/currencyConverterSlice"
 import { CurrencyPicker } from "../currencyPicker/CurrencyPicker"
-import { useGetRateQuery } from "../../store/currencyConverterApi"
-import { isRateData } from "../../utils/supportiveFuncs"
+import { getRate } from "../../utils/api";
 import './CurrencyConverter.scss'
 
 interface CurrencyConverterProps {
@@ -15,15 +11,10 @@ interface CurrencyConverterProps {
 export const CurrencyConverter: FC<CurrencyConverterProps> = (props) => {
   const { list } = props
 
-  const dispatch = useDispatch()
-
-  const from = useSelector((state: RootState) => state.currencyConverter.from)
-  const to = useSelector((state: RootState) => state.currencyConverter.to)
-
   const [fromValue, setFromValue] = useState<string>('100')
   const [toValue, setToValue] = useState<string>('')
-  
-  const { data: rateData, isLoading } = useGetRateQuery({ from, to, amount:fromValue }) 
+  const [fromCurrency, setFromCurrency] = useState<string>('USD')
+  const [toCurrency, setToCurrency] = useState<string>('EUR')
 
   const debouncedUpdateFromValue = useCallback(
     debounce((value: string) => {
@@ -33,11 +24,10 @@ export const CurrencyConverter: FC<CurrencyConverterProps> = (props) => {
   )
 
   useEffect(() => {
-    if (isRateData(rateData) && to in rateData.rates) {
-      const actualRate = rateData.rates[to]
-      setToValue(String(actualRate))
-    }
-  }, [fromValue, toValue, rateData, to])
+    getRate(fromCurrency, toCurrency, fromValue).then(res=>{
+      setToValue(String(res.rates[toCurrency]))
+    })
+  }, [fromValue, toValue, toCurrency])
 
   useEffect(() => {
     return () => {
@@ -46,46 +36,41 @@ export const CurrencyConverter: FC<CurrencyConverterProps> = (props) => {
   }, [debouncedUpdateFromValue])
 
   function onChangeFrom(e: ChangeEvent<HTMLSelectElement>) {
-    if(e.target.value === to){
-      dispatch(chooseFrom(from))
-      dispatch(chooseTo(e.target.value))
+    if(e.target.value === toCurrency){
+      setToCurrency(fromCurrency)
+      setFromCurrency(e.target.value)
     }
-    dispatch(chooseFrom(e.target.value))
+    setFromCurrency(e.target.value)
   }
 
   function onChangeTo(e: ChangeEvent<HTMLSelectElement>) {
-    if(e.target.value === from){
-      dispatch(chooseFrom(to))
-      dispatch(chooseTo(e.target.value))
+    if(e.target.value === fromCurrency){
+      setFromCurrency(toCurrency)
+      setToCurrency(e.target.value)
     }
-    dispatch(chooseTo(e.target.value))
+    setToCurrency(e.target.value)
   }
 
   function swapValues(){
-    dispatch(chooseFrom(to))
-    dispatch(chooseTo(from))
+    setFromCurrency(toCurrency)
+    setToCurrency(fromCurrency)
   }
 
-  if(isLoading){
-    return (
-      <h1>Загрузка...</h1>
-    )
-  }
 
   return (
     <div className='wrapper'>
       <CurrencyPicker 
         value={fromValue}
         list={list}
-        defaultItem={from} 
+        defaultItem={fromCurrency} 
         onInputChange={(value)=>debouncedUpdateFromValue(value)}
         onSelectChange={onChangeFrom}
       />
-      <img src='/assets/exchange.svg' className='img' onClick={swapValues}/>
+      <img src='./assets/exchange.svg' className='img' onClick={swapValues}/>
       <CurrencyPicker 
         value={toValue}
         list={list}
-        defaultItem={to} 
+        defaultItem={toCurrency} 
         onInputChange={() => {}}
         onSelectChange={onChangeTo}
         disabled

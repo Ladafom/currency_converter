@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import federation from '@originjs/vite-plugin-federation';
+import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 export default defineConfig({
   optimizeDeps: {
@@ -12,17 +13,28 @@ export default defineConfig({
       name: 'currencyConverter',
       filename: 'currencyConverter.js',
       exposes: {
-        './AppWrapper': './src/components/appWrapper/AppWrapper',
         './App': './src/App',
-        './CurrencyConverter': './src/components/currencyConverter/CurrencyConverter',
-        './CurrencyPicker':'./src/components/currencyPicker/CurrencyPicker',
-        './Select':'./src/components/select/Select',
+        './CurrencyConverter': './src/components/currencyConverter/CurrencyConverter.tsx',
+        './CurrencyPicker':'./src/components/currencyPicker/CurrencyPicker.tsx',
+        './Select':'./src/components/select/Select.tsx',
+
       },
-      shared: ['react', 'react-dom', 'react-router-dom', 'react-redux', '@reduxjs/toolkit'],
+      shared: ['react', 'react-dom', 'react-router-dom'],
     }),
+    cssInjectedByJsPlugin(),
   ],
   build: {
     target: 'esnext',
+    assetsInlineLimit: 0,
+    rollupOptions: {
+      output: {
+        assetFileNames: 'assets/[name].[hash].[ext]',
+        entryFileNames: 'assets/[name].[hash].js',
+      },
+    },
+    manifest: true,
+    outDir: 'dist',
+    assetsDir: 'assets',
   },
   server: {
     port: 5001, 
