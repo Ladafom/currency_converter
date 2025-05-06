@@ -3,7 +3,8 @@
 
   &_input{
     background-color: #F18900;
-    max-width: 360px;
+    box-sizing: border-box;
+    width: 100%; 
     color: #fff;
     font-size: 40px;
     font-weight: 700;
@@ -13,6 +14,36 @@
     border: none;
     &:focus {
       outline: none;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .currency-picker {
+    &_input {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 24px;
+    }
+  }
+}
+
+@media (max-width: 620px) {
+  .currency-picker {
+    flex-direction: column;
+
+    &_input{
+      border-radius: 10px 10px 0 0;
+    }
+  }
+}
+
+@media (max-width: 400px) {
+  .currency-picker {
+    &_input{
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 20px;
     }
   }
 }

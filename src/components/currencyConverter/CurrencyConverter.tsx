@@ -58,7 +58,7 @@ export const CurrencyConverter: FC<CurrencyConverterProps> = (props) => {
 
 
   return (
-    <div className='wrapper'>
+    <div className='currency-converter'>
       <CurrencyPicker 
         value={fromValue}
         list={list}
