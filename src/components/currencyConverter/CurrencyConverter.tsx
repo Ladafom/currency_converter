@@ -27,7 +27,7 @@ export const CurrencyConverter: FC<CurrencyConverterProps> = (props) => {
     getRate(fromCurrency, toCurrency, fromValue).then(res=>{
       setToValue(String(res.rates[toCurrency]))
     })
-  }, [fromValue, toValue, toCurrency])
+  }, [fromValue, toValue, toCurrency, fromCurrency])
 
   useEffect(() => {
     return () => {
